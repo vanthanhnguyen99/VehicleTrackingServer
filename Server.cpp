@@ -126,52 +126,75 @@ int main()
          }
 
          cout << "New connection!!! ";
-         // send hello
-         if (clientNumber < MAXCLIENTS)
-         {
-            // send confirm to client
-            bool *p = new bool;
-            *p = true;
-            send(new_socket,p,sizeof(bool),0);
 
-            // delete pointer
-            delete p;
-            
-            int *type = new int;
-            recv(new_socket,type,sizeof(int),0);
-            if (*type == 1) // location client
+         // receive type of client
+         int *type = new int;
+         recv(new_socket,type,sizeof(int),0);
+
+         if (*type == 1) // location client
+         {
+            if (clientNumber < MAXCLIENTS)
             {
+               
+               // send confirm to vehicle client
+               bool *p = new bool;
+               *p = true;
+               send(new_socket,p,sizeof(bool),0);
+
+               // delete pointer
+               delete p;
+
+               // add client to list
                for (int i = 0; i < MAXCLIENTS; i++)
                {
                   if (client_socket[i] == -1)
                   {
                      client_socket[i] = new_socket;
-                     
+                  
                      cout << "Added new connection to list at " << i << "\n";
                      clientNumber++;
                      break;
                   }
                }
+
             }
             else
             {
-               client_socket[MAXCLIENTS] = new_socket;
-               cout << "An map client connected" << endl;
+               // send confirm to client
+               bool *p = new bool;
+               *p = false;
+               send(new_socket,p,sizeof(bool),0);
+
+               // delete pointer
+               delete p;
             }
-            delete type;
          }
          else
          {
-            // send confirm to client
-            bool *p = new bool;
-            *p = false;
-            send(new_socket,p,sizeof(bool),0);
+            if (client_socket[MAXCLIENTS] == -1)
+            {
+               client_socket[MAXCLIENTS] = new_socket;
+               cout << "An map client connected" << endl;
 
-            // delete pointer
-            delete p;
+               // send confirm to client
+               bool *p = new bool;
+               *p = true;
+               send(new_socket,p,sizeof(bool),0);
+               // delete pointer
+               delete p;
+            }
+            else
+            {
+               // send confirm to client
+               bool *p = new bool;
+               *p = false;
+               send(new_socket,p,sizeof(bool),0);
+               // delete pointer
+               delete p;
+            }
+               
          }
-       
-         
+
       }
       
         // check client map
