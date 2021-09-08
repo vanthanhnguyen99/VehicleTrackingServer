@@ -70,7 +70,9 @@ bool handleClient(int &socketConnection, cord* &location, cord *locations[])
         location->name[i] = p->name[i];
     }
 
-    
+    bool *confirm = new bool;
+    send(socketConnection,confirm,1,0);
+    delete confirm;
 
     cout << location->x << "," << location->y << endl;
     cout << location->name << endl;
